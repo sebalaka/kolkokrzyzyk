@@ -116,13 +116,6 @@ public class KolkoKrzyzyk extends Application {
         primaryStage.show();
     }
 
-//    private Button createButton(String text) {
-//        Button button = new Button(text);
-//        button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-//        button.setOnAction(e -> System.out.println(text));
-//        return button ;
-//    }
-
     private Button createButton() {
         Button button = new Button();
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
