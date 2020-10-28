@@ -14,7 +14,8 @@ import javafx.stage.Stage;
 
 
 public class KolkoKrzyzyk extends Application {
-//
+    private boolean turnX = true;
+    private boolean turnO = true;
 //    private Image imageback = new Image("file:src/main/resources/table.png");
 //    private Image xImg = new Image("file:src/main/resources/x.png");
 //
@@ -90,19 +91,25 @@ public class KolkoKrzyzyk extends Application {
 //        primaryStage.setScene(scene);
 //        primaryStage.show();
 
+
         GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
         int numRows = 3;
         int numColumns = 3;
+
         for (int row = 0; row < numRows; row++) {
             RowConstraints rc = new RowConstraints();
             rc.setFillHeight(true);
-            rc.setVgrow(Priority.ALWAYS);
+//            rc.setVgrow(Priority.ALWAYS);
+            rc.setPercentHeight(33);
             grid.getRowConstraints().add(rc);
         }
         for (int col = 0; col < numColumns; col++) {
             ColumnConstraints cc = new ColumnConstraints();
             cc.setFillWidth(true);
-            cc.setHgrow(Priority.ALWAYS);
+//            cc.setHgrow(Priority.ALWAYS);
+            cc.setPercentWidth(33.0);
             grid.getColumnConstraints().add(cc);
         }
 
@@ -112,6 +119,7 @@ public class KolkoKrzyzyk extends Application {
         }
 
         Scene scene = new Scene(grid, 500, 500, Color.BLACK);
+        primaryStage.fullScreenProperty();
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -120,12 +128,20 @@ public class KolkoKrzyzyk extends Application {
         Button button = new Button();
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         button.setFont(Font.font("Roboto",70.0));
+        button.setStyle("-fx-padding: 30");
         button.setOnMouseClicked(event -> {
             if (button.getText() == null || button.getText().equals("")) {
                 if (event.getButton() == MouseButton.PRIMARY) {
+                    if(!turnX) return;
                     button.setText("X");
-                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    turnX = false;
+                    turnO = true;
+                 }
+                else if (event.getButton() == MouseButton.SECONDARY) {
+                    if(!turnO) return;
                     button.setText("O");
+                    turnX = true;
+                    turnO = false;
                 }
             }
         });
