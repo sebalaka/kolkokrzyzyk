@@ -2,6 +2,7 @@ package com.kodilla.kolkokrzyzyk;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -12,20 +13,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 public class KolkoKrzyzyk extends Application {
     private boolean turnX = true;
     private boolean turnO = true;
-//    private Image imageback = new Image("file:src/main/resources/table.png");
-//    private Image xImg = new Image("file:src/main/resources/x.png");
-//
-//    Label playerScoreLabel = new Label();
-//    Label computerScoreLabel = new Label();
-//    Button test [][] = new Button[2][2];
-//    Button startbtn = new Button();
-//    Button x = new Button();
-//    Button x2 = new Button();
 
+    GridPane grid = new GridPane();
 
     public static void main(String[] args) {
         launch(args);
@@ -33,66 +31,7 @@ public class KolkoKrzyzyk extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, true, false);
-//        BackgroundImage backgroundImage = new BackgroundImage(imageback, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-//        Background background = new Background(backgroundImage);
 
-
-//
-//        playerScoreLabel.setText("Wynik gracza:");
-//        playerScoreLabel.setFont(new Font("Arial", 20));
-//        playerScoreLabel.setTextFill(Color.web("d5d645"));
-//        computerScoreLabel.setText("Wynik komputera:");
-//        computerScoreLabel.setFont(new Font("Arial", 20));
-//        computerScoreLabel.setTextFill(Color.web("d5d645"));
-//        startbtn.setText("Rozpocznij nowa rozgrywke");
-//        startbtn.setFont(new Font("Arial", 20));
-
-//        x.setText("X");
-//        x2.setBackground(xImg);
-//        x2.setMaxSize(20,20);
-//        x.setPrefSize(40,40);
-
-//        GridPane grid = new GridPane();
-
-//        for (int i = 0; i < 10; i++) {
-//            RowConstraints row = new RowConstraints(50);
-//            grid.getRowConstraints().add(row);
-//        }
-//
-//        for (int i = 0; i < 3; i++) {
-//            for (int j = 0; j < 3; j++) {
-//                Button test = new Button();
-//                test.setTranslateX(j * 200);
-//                test.setTranslateY(i * 200);
-//
-//                grid.getChildren().add(test);
-//            }
-//        }
-//        for(int i=0; i<3; i++){
-//            for(int j=0; j<3; j++){
-//                gridpane.add
-//            }
-        //zagniezdzenie obiektow
-//        grid.setBackground(background);
-
-//        grid.add(startbtn, 1, 1);
-////        grid.add(x, 2, 4);
-////        grid.add(x2, 3,5);
-////        grid.add(test, 2, 4);
-////        grid.add(sc)
-//
-//        grid.add(playerScoreLabel,1,2);
-//        grid.add(computerScoreLabel,1,3);
-//
-//        Scene scene = new Scene(grid, 500, 500, Color.BLACK);
-//
-//        primaryStage.setTitle("KolkoKrzyzyk");
-//        primaryStage.setScene(scene);
-//        primaryStage.show();
-
-
-        GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         int numRows = 3;
@@ -136,24 +75,81 @@ public class KolkoKrzyzyk extends Application {
                     button.setText("X");
                     turnX = false;
                     turnO = true;
+                    if(isWon("X")){
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Wygrał");
+                        alert.setHeaderText("Gracz");
+                        alert.setContentText("X");
+                        alert.showAndWait();
+                    };
                  }
                 else if (event.getButton() == MouseButton.SECONDARY) {
                     if(!turnO) return;
                     button.setText("O");
                     turnX = true;
                     turnO = false;
+                    if(isWon("O")){
+                        System.out.println("O wygralo");
+                    };
                 }
             }
         });
         return button;
     }
-//padding
-    //logike
+
+    private boolean isAnyRowWon(String symbol) {
+        Map<Integer, Integer> logicMap = new HashMap<>();
+        List<Button> buttons = grid.getChildren().stream()
+                .filter(node -> node instanceof Button)
+                .map(node -> (Button) node)
+                .filter(button -> symbol.equals(button.getText()))
+                .collect(Collectors.toList());
+
+        for (Button button:buttons){
+            Integer rowIndex = GridPane.getRowIndex(button);
+            if (logicMap.containsKey(rowIndex)) {
+                logicMap.put(rowIndex, logicMap.get(rowIndex) + 1);
+            } else {
+                logicMap.put(rowIndex,1);
+            }
+            //nr wiersza / ilosc wystapien
+        }
+        return logicMap.values().stream().anyMatch(i -> i == 3);
+        //kluczem nr wiersza wartoscia ilosc wystapien
+    }
+
+    private boolean isAnyColumnWon(String symbol) {
+        Map<Integer, Integer> logicMap = new HashMap<>();
+        List<Button> buttons = grid.getChildren().stream()
+                .filter(node -> node instanceof Button)
+                .map(node -> (Button) node)
+                .filter(button -> symbol.equals(button.getText()))
+                .collect(Collectors.toList());
+
+        for (Button button:buttons){
+            Integer columnIndex = GridPane.getRowIndex(button);
+            if (logicMap.containsKey(columnIndex)) {
+                logicMap.put(columnIndex, logicMap.get(columnIndex) + 1);
+            } else {
+                logicMap.put(columnIndex,1);
+            }
+            //nr wiersza / ilosc wystapien
+        }
+        return logicMap.values().stream().anyMatch(i -> i == 3);
+        //kluczem nr wiersza wartoscia ilosc wystapien
+    }
+
+    //na ukos ifami
+
+    private boolean isWon(String symbol){
+        return isAnyRowWon(symbol) || isAnyColumnWon(symbol);
+    }
+
+ //alert / dialog
+
+    //metody dla kolumn(jak wiersze) i skosu (ifami)
+    //dodac komputer, sprawdza puste pola, dodaje random ruch
+    // ja sprawdzam czy po moim ruchu wygralem // komputer wygral
+    //moj ruch powinien uruchamiac komputera (po sprawczeniu)
+    //stowrzyc logike komputera i wywolac w metodzie "createbuttonO"
 }
-
-
-// plansza buttonow rowconstraint columncst
-
-//petla
-
-//logika

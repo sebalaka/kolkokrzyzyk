@@ -1,0 +1,5 @@
+//metody dla kolumn(jak wiersze) i skosu (ifami)
+        //dodac komputer, sprawdza puste pola, dodaje random ruch
+        // ja sprawdzam czy po moim ruchu wygralem // komputer wygral
+        //moj ruch powinien uruchamiac komputera (po sprawczeniu)
+        //stowrzyc logike komputera i wywolac w metodzie "createbuttonO"
