@@ -41,14 +41,14 @@ public class KolkoKrzyzyk extends Application {
             RowConstraints rc = new RowConstraints();
             rc.setFillHeight(true);
 //            rc.setVgrow(Priority.ALWAYS);
-            rc.setPercentHeight(33);
+            rc.setPercentHeight(30);
             grid.getRowConstraints().add(rc);
         }
         for (int col = 0; col < numColumns; col++) {
             ColumnConstraints cc = new ColumnConstraints();
             cc.setFillWidth(true);
 //            cc.setHgrow(Priority.ALWAYS);
-            cc.setPercentWidth(33.0);
+            cc.setPercentWidth(30.0);
             grid.getColumnConstraints().add(cc);
         }
 
@@ -62,12 +62,20 @@ public class KolkoKrzyzyk extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+//    private void check(){
+//
+//        if (button.getText().equals("X") && button.getText().equals("X") && button.getText().equals("X") ){
+//            GridPane.getRowIndex(button)
+//        }
+//    }
+
 
     private Button createButton() {
         Button button = new Button();
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         button.setFont(Font.font("Roboto",70.0));
         button.setStyle("-fx-padding: 30");
+
         button.setOnMouseClicked(event -> {
             if (button.getText() == null || button.getText().equals("")) {
                 if (event.getButton() == MouseButton.PRIMARY) {
@@ -77,8 +85,8 @@ public class KolkoKrzyzyk extends Application {
                     turnO = true;
                     if(isWon("X")){
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Wygrał");
-                        alert.setHeaderText("Gracz");
+                        alert.setTitle("Koniec gry");
+                        alert.setHeaderText("Wygrał gracz");
                         alert.setContentText("X");
                         alert.showAndWait();
                     };
@@ -89,11 +97,30 @@ public class KolkoKrzyzyk extends Application {
                     turnX = true;
                     turnO = false;
                     if(isWon("O")){
-                        System.out.println("O wygralo");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Koniec gry");
+                        alert.setHeaderText("Wygrał komputer");
+                        alert.setContentText("O");
+                        alert.showAndWait();
                     };
                 }
             }
+        }
+
+
+        );
+
+        Button reset = new Button();
+        grid.add(reset, 0,3);
+        reset.setText("RESTART");
+        reset.setOnMouseClicked(mouseEvent -> {
+            grid.getChildren().stream()
+                    .filter(node -> node instanceof Button)
+                    .map(node -> (Button) node)
+                    .filter(b -> "X".equals(b.getText()) || "O".equals(b.getText()))
+                    .forEach(b -> b.setText(""));
         });
+
         return button;
     }
 
@@ -105,6 +132,8 @@ public class KolkoKrzyzyk extends Application {
                 .filter(button -> symbol.equals(button.getText()))
                 .collect(Collectors.toList());
 
+
+
         for (Button button:buttons){
             Integer rowIndex = GridPane.getRowIndex(button);
             if (logicMap.containsKey(rowIndex)) {
@@ -112,7 +141,7 @@ public class KolkoKrzyzyk extends Application {
             } else {
                 logicMap.put(rowIndex,1);
             }
-            //nr wiersza / ilosc wystapien
+
         }
         return logicMap.values().stream().anyMatch(i -> i == 3);
         //kluczem nr wiersza wartoscia ilosc wystapien
@@ -127,7 +156,7 @@ public class KolkoKrzyzyk extends Application {
                 .collect(Collectors.toList());
 
         for (Button button:buttons){
-            Integer columnIndex = GridPane.getRowIndex(button);
+            Integer columnIndex = GridPane.getColumnIndex(button);
             if (logicMap.containsKey(columnIndex)) {
                 logicMap.put(columnIndex, logicMap.get(columnIndex) + 1);
             } else {
@@ -139,10 +168,131 @@ public class KolkoKrzyzyk extends Application {
         //kluczem nr wiersza wartoscia ilosc wystapien
     }
 
-    //na ukos ifami
+    private boolean isAnyCrossWon(String symbol) {
+        List<Button> buttons = grid.getChildren().stream()
+                .filter(node -> node instanceof Button)
+                .map(node -> (Button) node)
+                .filter(button -> symbol.equals(button.getText()))
+                .collect(Collectors.toList());
+
+        int counter = 0;
+        for (Button button:buttons){
+            Integer columnIndex = GridPane.getColumnIndex(button);
+            Integer rowIndex = GridPane.getRowIndex(button);
+
+
+
+            if ((columnIndex == 0 && rowIndex == 0) ||
+                    (columnIndex == 1 && rowIndex == 1) ||
+                    (columnIndex == 2 && rowIndex == 2) )  {
+                counter++;
+            }
+            //nr wiersza / ilosc wystapien
+        }
+        return counter==3;
+        //kluczem nr wiersza wartoscia ilosc wystapien
+    }
+
+    private boolean isAnyCrossWon2(String symbol) {
+        List<Button> buttons = grid.getChildren().stream()
+                .filter(node -> node instanceof Button)
+                .map(node -> (Button) node)
+                .filter(button -> symbol.equals(button.getText()))
+                .collect(Collectors.toList());
+
+        int counter = 0;
+        for (Button button:buttons){
+            Integer columnIndex = GridPane.getColumnIndex(button);
+            Integer rowIndex = GridPane.getRowIndex(button);
+
+
+
+            if ((columnIndex == 0 && rowIndex == 2) ||
+                    (columnIndex == 1 && rowIndex == 1) ||
+                    (columnIndex == 2 && rowIndex == 0) )  {
+                counter++;
+            }
+            //nr wiersza / ilosc wystapien
+        }
+        return counter==3;
+        //kluczem nr wiersza wartoscia ilosc wystapien
+    }
+
+//    public boolean isAnyCrossWon (String symbol) {
+
+
+//        Map<Integer, Integer> logicMap = new HashMap<>();
+//        List<Button> buttons = grid.getChildren().stream()
+//                .filter(node -> node instanceof Button)
+//                .map(node -> (Button) node)
+//                .filter(button -> symbol.equals(button.getText()))
+//                .collect(Collectors.toList());
+//
+//        for (Button button:buttons) {
+//            Integer columnIndex = GridPane.getColumnIndex(button);
+//            Integer rowIndex = GridPane.getRowIndex(button);
+//
+//            if(GridPane.getRowIndex(button) == GridPane.getColumnIndex(button)){
+//                logicMap.put(columnIndex, logicMap.get(columnIndex) + 1);
+//                logicMap.put(rowIndex, logicMap.get(rowIndex) + 1);
+//            } else {
+//                logicMap.put(columnIndex,1);
+//                logicMap.put(rowIndex,1);
+//            }
+//            }
+//        return true;
+//        }
+////////////////////////////////
+//        Map<Integer, Integer> logicMap = new HashMap<>();
+//        List<Button> buttons = grid.getChildren().stream()
+//                .filter(node -> node instanceof Button)
+//                .map(node -> (Button) node)
+//                .filter(button -> symbol.equals(button.getText()))
+//                .collect(Collectors.toList());
+//
+//        for (Button button:buttons) {
+//            Integer columnIndex = GridPane.getColumnIndex(button);
+//            Integer rowIndex = GridPane.getRowIndex(button);
+//
+//            if(columnIndex == rowIndex){
+//                logicMap.put(columnIndex, logicMap.get(columnIndex) + 1);
+//                logicMap.put(rowIndex, logicMap.get(rowIndex) - 1);
+//            } else {
+//                logicMap.put(columnIndex,1);
+//                logicMap.put(rowIndex,1);
+//            }
+//        }
+//        return true;
+//    }
+
+//    public boolean isAnyCrossWon2 (String symbol) {
+//
+//
+//        Map<Integer, Integer> logicMap = new HashMap<>();
+//        List<Button> buttons = grid.getChildren().stream()
+//                .filter(node -> node instanceof Button)
+//                .map(node -> (Button) node)
+//                .filter(button -> symbol.equals(button.getText()))
+//                .collect(Collectors.toList());
+//
+//        for (Button button : buttons) {
+//            Button button1 = buttons.get(1);
+//            button1.setText("X");
+//        }
+//
+//        return logicMap.values().stream().anyMatch(i -> i == 3);
+//    }
+
+    private void computer(){
+
+    }
+
+
+
+
 
     private boolean isWon(String symbol){
-        return isAnyRowWon(symbol) || isAnyColumnWon(symbol);
+        return isAnyRowWon(symbol) || isAnyColumnWon(symbol) || isAnyCrossWon(symbol) || isAnyCrossWon2(symbol);
     }
 
  //alert / dialog
